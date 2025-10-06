@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danial Asri - AI Self Intro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-top: 50px;
+            border: 1px solid #444;
+        }
+
+        .terminal-header {
+            background: #363636;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+
+        .terminal-title {
+            color: #fff;
+            text-align: center;
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .command {
+            color: #ffff00;
+            margin-bottom: 10px;
+        }
+
+        .output {
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .highlight {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding-left: 10px;
+            border-left: 3px solid #00ff00;
+        }
+
+        .reason {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00ff00;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .typing-area {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .prompt {
+            color: #ffff00;
+            margin-right: 10px;
+        }
+
+        .hidden-input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            outline: none;
+            flex: 1;
+        }
+
+        /* Custom Modal Styles */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .modal-header {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .modal-ok {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .modal-ok:hover {
+            background: #00cc00;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .terminal-body {
+                padding: 20px;
+            }
+            
+            .terminal-title {
+                font-size: 12px;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                </div>
+                <div class="terminal-title">system_intro.exe - Danial Asri</div>
+            </div>
+            <div class="terminal-body">
+                <div class="output">
+                    <span class="command">> system_profile --display</span>
+                </div>
+                
+                <div class="output" style="animation-delay: 0.5s;">
+                    <span class="highlight">Nama:</span> Danial Asri Bin Basri<br>
+                    <span class="highlight">Fungsi:</span> "Multimodal Learner" - Target: Beta Version 2.1<br>
+                    <span class="highlight">Tahun Dibangunkan:</span> 2004 (Tarikh Keluaran: 16 Februari)<br>
+                    <span class="highlight">Port Asal:</span> Pulau Mutiara (Pulau Pinang)
+                </div>
+
+                <div class="output" style="animation-delay: 1s;">
+                    <span class="command">> about_system --detailed</span>
+                </div>
+
+                <div class="output" style="animation-delay: 1.5s;">
+                    <div class="section">
+                        Saya adalah prototaip dari <span class="highlight">Pusat Pengajian Pengkomputeran</span>, 
+                        sedang menjalani proses upgrade utama dalam program 
+                        <span class="highlight">Sarjana Muda Sains (Teknologi Maklumat)</span>. 
+                        Sistem operasi saya berfungsi optimum dalam mod 
+                        <span class="highlight">Multimodal (VARK)</span>, 
+                        bermakna saya boleh menerima input dan memproses maklumat melalui pelbagai saluran.
+                    </div>
+                </div>
+
+                <div class="output" style="animation-delay: 2s;">
+                    <span class="command">> install_location --reason</span>
+                </div>
+
+                <div class="output" style="animation-delay: 2.5s;">
+                    <div class="reason">
+                        <span class="highlight">[1] The Northern Code:</span> 
+                        Sebagai anak jati utara, saya ingin 'debug' dan memahami semua stereotaip "utara sejati" ini.
+                    </div>
+                    
+                    <div class="reason">
+                        <span class="highlight">[2] System Expansion:</span> 
+                        UUM adalah 'platform' terbaik untuk menambah 'library' pengetahuan dan rangkaian profesional.
+                    </div>
+                    
+                    <div class="reason">
+                        <span class="highlight">[3] New Environment, New Kernel:</span> 
+                        Perubahan persekitaran akan meng'upgrade' 'kernel' pemikiran dan kreativiti saya.
+                    </div>
+                </div>
+
+                <div class="output" style="animation-delay: 3s;">
+                    <span class="command">> final_execution --initiate</span>
+                </div>
+
+                <div class="output" style="animation-delay: 3.5s;">
+                    Bersama-sama kita boleh 'collaborate', 'debug' masalah, dan 'code' masa depan yang lebih baik.
+                </div>
+
+                <div class="status" style="animation-delay: 4s;">
+                    <span class="highlight">Status Semasa:</span> System Online. Ready to Connect.
+                    <span class="cursor"></span>
+                </div>
+
+                <div class="typing-area" style="animation-delay: 4.5s;">
+                    <span class="prompt">></span>
+                    <input type="text" class="hidden-input" placeholder="Type 'connect' to initiate collaboration..." id="userInput">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="custom-modal" id="customModal">
+        <div class="modal-content">
+            <div class="modal-header">Connected ✅</div>
+            <div>Looking forward to collaborating with you!</div>
+            <button class="modal-ok" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add typing effect to the input placeholder
+            const input = document.getElementById('userInput');
+            const phrases = [
+                "Type 'connect' to initiate collaboration...",
+                "Type 'hello' to start conversation...",
+                "Type 'collab' to work together..."
+            ];
+            let currentPhrase = 0;
+            let currentLetter = 0;
+            let isDeleting = false;
+            let typingSpeed = 100;
+
+            function type() {
+                const current = phrases[currentPhrase];
+                
+                if (isDeleting) {
+                    input.placeholder = current.substring(0, currentLetter - 1);
+                    currentLetter--;
+                    typingSpeed = 50;
+                } else {
+                    input.placeholder = current.substring(0, currentLetter + 1);
+                    currentLetter++;
+                    typingSpeed = 100;
+                }
+
+                if (!isDeleting && currentLetter === current.length) {
+                    isDeleting = true;
+                    typingSpeed = 1000; // Pause at end
+                } else if (isDeleting && currentLetter === 0) {
+                    isDeleting = false;
+                    currentPhrase = (currentPhrase + 1) % phrases.length;
+                    typingSpeed = 500; // Pause before starting new phrase
+                }
+
+                setTimeout(type, typingSpeed);
+            }
+
+            // Start typing animation
+            type();
+
+            // Handle user input
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    if (input.value.toLowerCase() === 'connect' || 
+                        input.value.toLowerCase() === 'hello' || 
+                        input.value.toLowerCase() === 'collab') {
+                        showModal();
+                        input.value = '';
+                    } else {
+                        alert('Command not recognized. Try: connect, hello, or collab');
+                        input.value = '';
+                    }
+                }
+            });
+
+            // Make terminal buttons interactive
+            const buttons = document.querySelectorAll('.terminal-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.classList.contains('close')) {
+                        if (confirm('Close terminal?')) {
+                            document.body.style.opacity = '0';
+                            setTimeout(() => {
+                                document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: black; color: lime; font-family: monospace;">Terminal Closed. Refresh to restart.</div>';
+                            }, 500);
+                        }
+                    } else if (this.classList.contains('minimize')) {
+                        document.querySelector('.terminal-body').style.display = 
+                            document.querySelector('.terminal-body').style.display === 'none' ? 'block' : 'none';
+                    } else if (this.classList.contains('maximize')) {
+                        document.querySelector('.terminal').classList.toggle('fullscreen');
+                    }
+                });
+            });
+        });
+
+        // Custom modal functions
+        function showModal() {
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('customModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
